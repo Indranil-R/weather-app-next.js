@@ -8,8 +8,10 @@ import {
   FaCloudShowersHeavy,
   FaCloudDrizzle,
   FaSmog,
+  FaWind,
+  FaTint,
+  FaCompass,
 } from "react-icons/fa";
-import { FaWind, FaTint, FaCompass } from "react-icons/fa";
 
 const iconMapping = {
   Thunderstorm: FaCloudRain,
