@@ -5,9 +5,7 @@ const Weather = () => {
   const [city, setCity] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(`The name you entered was: ${city}`);
-
-    // fetchWeather();
+    alert(`Your city name is: ${city}`);
   };
 
   return (
