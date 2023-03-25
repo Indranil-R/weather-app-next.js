@@ -1,4 +1,5 @@
 import axios from "axios";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 import {
   FaSun,
   FaCloud,
@@ -11,6 +12,7 @@ import {
   FaWind,
   FaTint,
   FaCompass,
+  FaExclamationTriangle,
 } from "react-icons/fa";
 
 const iconMapping = {
@@ -31,6 +33,7 @@ import React, { useState } from "react";
 const Weather = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [city, setCity] = useState("");
+  const [error, setError] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -39,10 +42,17 @@ const Weather = () => {
     }
   };
   const fetchWeather = async () => {
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.NEXT_PUBLIC_WEATHER_API}`;
-    const response = await axios.get(url);
-    setWeatherData(response.data);
-    console.log(weatherData);
+    try {
+      setWeatherData(null);
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.NEXT_PUBLIC_WEATHER_API}`;
+      const response = await axios.get(url);
+      setWeatherData(response.data);
+      setError(null);
+    } catch (error) {
+      setWeatherData(null);
+      setError(error.response?.data?.message || error.message);
+      console.log(error);
+    }
   };
 
   function WeatherIcon({ main }) {
@@ -52,25 +62,27 @@ const Weather = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-4xl font-bold text-green-500 mb-6">Weather App</h1>
+      <h1 className="text-4xl font-bold text-gray-500 mb-6">Weather App</h1>
+
       <form
-        className="flex flex-col sm:flex-row items-center sm:space-x-4 p-4 rounded-md shadow-md"
+        className="flex flex-col sm:flex-row items-center sm:space-x-4 p-4 rounded-md shadow-md bg-gray-100"
         onSubmit={handleSubmit}
       >
         <input
-          className="border border-gray-300 rounded-md px-4 py-2 w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="border border-gray-300 rounded-md px-4 py-2 w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-500"
           type="text"
           value={city}
           onChange={(e) => setCity(e.target.value)}
           placeholder="Enter city name"
         />
         <button
-          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-all duration-200"
+          className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-all duration-200"
           type="submit"
         >
           Get Weather
         </button>
       </form>
+
       {weatherData && (
         <div className="w-full max-w-md mt-8 bg-white rounded-lg shadow-md p-6 mx-auto">
           <p className="text-3xl font-bold mb-2 text-center">
@@ -83,7 +95,7 @@ const Weather = () => {
             </p>
           </div>
           <p className="text-lg text-gray-500 mt-2 text-center">
-            {weatherData.weather[0].description}
+            {weatherData.weather[0].main}
           </p>
           <div className="flex justify-between items-center mt-6">
             <div className="flex items-center">
@@ -105,6 +117,14 @@ const Weather = () => {
               </p>
             </div>
           </div>
+        </div>
+      )}
+      {error && (
+        <div className="w-full max-w-md mt-8 bg-white rounded-lg shadow-md p-6 mx-auto flex items-center">
+          <div className="mr-2 text-red-600">
+            <FaExclamationTriangle size={24} />
+          </div>
+          <p className="text-lg font-bold text-red-600">{error}</p>
         </div>
       )}
     </div>
